@@ -88,6 +88,19 @@
 
       useEffect(() => { saveState(state); }, [state]);
 
+      // ── Haven → palette syncing ──────────────────────────────────────
+      // Når hennes lagrede haven endrer seg (fullført onboarding, reload,
+      // eller en fremtidig haven-redigering), ruller paletten over til
+      // den som passer stemningen. Manuelle palett-valg i Tweaks-panelet
+      // overlever — useEffect fyrer kun når selve haven endrer seg.
+      useEffect(() => {
+        const haven = state.prefs?.haven;
+        if (!haven) return;
+        const target = HAVEN_PALETTES[haven];
+        if (target && target !== tweaks.palette) setTweak('palette', target);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [state.prefs?.haven]);
+
       // Update body background to match palette
       useEffect(() => {
         document.body.style.background = palette.canvas;
@@ -132,6 +145,13 @@
         setState({ onboarded: false, prefs: null, openedToday: null, archive: [], tab: 'today', streak: 1 });
       }
 
+      // Live palette preview når hun peker på en haven under onboarding,
+      // før valget er lagret i prefs (useEffect-en over tar over ved fullføring).
+      function handleHavenPreview(haven) {
+        const target = HAVEN_PALETTES[haven];
+        if (target) setTweak('palette', target);
+      }
+
       // Demo seed for archive when first arriving so it doesn't feel empty
       const seededArchive = useMemo(() => {
         if (state.archive.length > 0) return state.archive;
@@ -141,7 +161,13 @@
       // Determine which screen to show
       let screen;
       if (!state.onboarded || !state.prefs) {
-        screen = <Onboarding palette={palette} onDone={handleOnboardDone} />;
+        screen = (
+          <Onboarding
+            palette={palette}
+            onDone={handleOnboardDone}
+            onHavenChange={handleHavenPreview}
+          />
+        );
       } else {
         const tab = state.tab;
         screen = (
