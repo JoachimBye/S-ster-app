@@ -203,7 +203,7 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
       minHeight: '100%',
       background: `linear-gradient(180deg, ${palette.sun}30 0%, ${palette.page} 30%, ${palette.page} 100%)`,
       color: palette.ink,
-      paddingTop: 60,
+      paddingTop: 'calc(60px + env(safe-area-inset-top))',
     }}>
       {/* Header */}
       <div style={{ padding: '20px 24px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -309,7 +309,7 @@ function ArchiveScreen({ palette, archive, onUnsave }) {
       minHeight: '100%',
       background: palette.page,
       color: palette.ink,
-      paddingTop: 60,
+      paddingTop: 'calc(60px + env(safe-area-inset-top))',
     }}>
       <div style={{ padding: '20px 24px 12px' }}>
         <div style={{
@@ -412,7 +412,7 @@ function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
       minHeight: '100%',
       background: palette.page,
       color: palette.ink,
-      paddingTop: 60,
+      paddingTop: 'calc(60px + env(safe-area-inset-top))',
     }}>
       <div style={{ padding: '20px 24px 12px', display: 'flex', alignItems: 'center', gap: 16 }}>
         <div style={{
