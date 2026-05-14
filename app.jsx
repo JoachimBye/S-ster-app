@@ -57,10 +57,22 @@ const PALETTES = {
   },
 };
 
+// Each safe haven has a palette that matches its mood.
+// Used by the App to auto-tune the colors when she picks (or changes) her haven.
+const HAVEN_PALETTES = {
+  kitchen: 'goldenHour',   // morgenlys gjennom et kjøkkenvindu
+  sea:     'morningMist',  // saltluft, blå dis
+  forest:  'sagebrush',    // furu og ullpledd
+  garden:  'duskRose',     // roser og varm hud
+  library: 'duskRose',     // lampelys og gammelt papir
+  attic:   'goldenHour',   // takvindu og støvfnugg i sollys
+};
+
 // ─────────────────────────────────────────────────────────────────────
 // Message library — filtered by needs + interests
 // ─────────────────────────────────────────────────────────────────────
 const LIBRARY = [
+  // ── opprinnelige ──────────────────────────────────────────────────
   { tone: 'calm',       body: "Morgenen krever ingenting av deg ennå. Sitt litt med teen. Dagen kan vente." },
   { tone: 'calm',       body: "Du har lov til å bevege deg sakte i dag. Saktmodighet er ikke det motsatte av fremgang — det er teksturen i den." },
   { tone: 'warmth',     body: "Et sted, akkurat nå, tenker noen varmt på deg. Det lover jeg. Også jeg." },
@@ -73,6 +85,44 @@ const LIBRARY = [
   { tone: 'courage',    body: "Du trenger ikke føle deg modig for å være modig. Du må bare gjøre den neste lille, ærlige tingen." },
   { tone: 'perspective',body: "Om ti år vil i dag være et mykt, uskarpt fotografi. Behandle det varsomt mens det fortsatt er i fokus." },
   { tone: 'perspective',body: "Du er ikke på etterskudd. Det finnes ingen strek. Bare din egen stille, vakre vei." },
+
+  // ── nye, dype og bærende ─────────────────────────────────────────
+  { tone: 'calm',       body: "Du trenger ikke ha alt klart før du begynner dagen. Du trenger bare å begynne den." },
+  { tone: 'calm',       body: "Pust inn på fire. Hold på fire. Pust ut på seks. Det er hele oppskriften noen morgener trenger." },
+  { tone: 'calm',       body: "Stillhet er ikke det samme som tomhet. Det er rommet hvor du kommer tilbake til deg selv." },
+  { tone: 'calm',       body: "I dag er det lov å gjøre én ting om gangen. Med pauser innimellom. Og en pause til etter det." },
+  { tone: 'calm',       body: "Det er greit om dagen din i dag bare betyr 'rene kopper og en kort tur ut'. Det teller. Alt teller." },
+
+  { tone: 'warmth',     body: "Du er ikke et prosjekt som skal ferdigstilles. Du er et menneske som får lov til å bo i seg selv." },
+  { tone: 'warmth',     body: "Det finnes mennesker som blir litt gladere bare av å vite at du finnes. Du er en av dem også, forresten." },
+  { tone: 'warmth',     body: "Hvis ingen har sagt det til deg ennå i dag: jeg er glad du våknet." },
+  { tone: 'warmth',     body: "Du fortjener den samme tålmodigheten du gir alle andre. Begynn i dag. I morgen igjen." },
+  { tone: 'warmth',     body: "Om du kunne høre hvor varmt jeg tenker på deg, ville du blitt rørt. Det er sant. Lover." },
+
+  { tone: 'motivation', body: "Du trenger ikke gjøre alt. Bare det neste. Og det neste etter det er fortsatt en helt egen sak." },
+  { tone: 'motivation', body: "Det du kaller utsettelse er ofte et hjerte som trenger litt mer informasjon. Vær snill mens det finner ut hva det spør om." },
+  { tone: 'motivation', body: "Ferdig er bedre enn perfekt. Begynt er bedre enn ferdig. Begynn." },
+  { tone: 'motivation', body: "Små valg, gjentatt med stahet, blir til et liv du gjenkjenner deg selv i." },
+  { tone: 'motivation', body: "Vet du den lille tingen du har utsatt? Sett timer på syv minutter. Bare syv. Du kan stoppe etterpå. Du kommer ikke til det." },
+
+  { tone: 'courage',    body: "Mot er ikke fravær av redsel. Det er å la skoene fortsette mens skuldrene skjelver." },
+  { tone: 'courage',    body: "Send meldingen. Søk på jobben. Si det høyt. Det verste som kan skje er et nei du allerede levde med." },
+  { tone: 'courage',    body: "Du har lov til å forandre mening. Det er ikke svik mot den du var i fjor — det er respekt for den du er i dag." },
+  { tone: 'courage',    body: "Det du kaller 'for sent' er ofte bare 'forskjellig fra planen'. Planen var aldri sjefen din. Du er." },
+
+  { tone: 'perspective',body: "Hvis du så på deg selv fra ti år tilbake — ville du vært streng med det mennesket? Du står i et bilde noen ser på akkurat slik i dag." },
+  { tone: 'perspective',body: "Et liv består av søndager. Søndagsmorgener, søndagskvelder, søndager uten noe på programmet. Ikke vent på dem — du står midt i en nå." },
+  { tone: 'perspective',body: "Det som plager deg mest i kveld vil du sannsynligvis ikke huske om to år. Det du gjorde for noen i dag, kan de huske resten av livet." },
+  { tone: 'perspective',body: "Du er ikke for mye. Du er bare for mye for de gale rommene." },
+
+  // ── nye, med et lite glimt i øyet ────────────────────────────────
+  { tone: 'humor',      body: "Påminnelse: kaffen din lager seg ikke selv. Dessverre. Jeg har sjekket flere ganger." },
+  { tone: 'humor',      body: "Hvis dagen kjennes mye, husk: jorda roterer på 1670 km/t. Du står faktisk allerede i et imponerende tempo." },
+  { tone: 'humor',      body: "Du har ikke for mye å gjøre. Du har for mange faner åpne. Det er en viss forskjell." },
+  { tone: 'humor',      body: "Beste råd for i dag: drikk vann, blunk litt, og minn deg selv på at ingen voksne egentlig vet hva de driver med." },
+  { tone: 'humor',      body: "Hvis du møter deg selv i speilet og tenker 'hva' — husk: det gjør alle. Du er i ganske godt selskap." },
+  { tone: 'humor',      body: "Husk: planter dør også. Det er ikke nødvendigvis din skyld. Noen ganger er det bare en torsdag." },
+  { tone: 'humor',      body: "Hjernen din ber om scrolling. Hjernen din vet ikke alltid hva som er best for den. Den er som en treåring som nettopp har funnet godteskuffen." },
 ];
 
 // Pick a deterministic message of the day given prefs + a date seed
@@ -201,6 +251,7 @@ function OnboardScreen({ palette, step, total, eyebrow, title, subtitle, childre
       background: palette.page,
       color: palette.ink,
       paddingTop: 60,
+      transition: 'background 600ms ease, color 600ms ease',
     }}>
       {/* Top: progress + back */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '4px 22px 0', gap: 12, height: 28 }}>
@@ -272,7 +323,7 @@ function OnboardScreen({ palette, step, total, eyebrow, title, subtitle, childre
   );
 }
 
-function Onboarding({ palette, onDone }) {
+function Onboarding({ palette, onDone, onHavenChange }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [needs, setNeeds] = useState([]);
@@ -302,6 +353,7 @@ function Onboarding({ palette, onDone }) {
       color: palette.ink,
       display: 'flex', flexDirection: 'column',
       paddingTop: 60,
+      transition: 'background 600ms ease, color 600ms ease',
     }}>
       <div style={{ flex: 1, padding: '90px 32px 0', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
         {/* sun */}
@@ -431,7 +483,12 @@ function Onboarding({ palette, onDone }) {
           return (
             <button
               key={h.key}
-              onClick={() => setHaven(h.key)}
+              onClick={() => {
+                setHaven(h.key);
+                // Live preview: la fargepaletten følge stemningen
+                // hun nettopp pekte på, før hun går videre.
+                if (onHavenChange) onHavenChange(h.key);
+              }}
               style={{
                 textAlign: 'left',
                 padding: '16px 18px',
@@ -514,6 +571,7 @@ function Onboarding({ palette, onDone }) {
         color: palette.ink,
         display: 'flex', flexDirection: 'column',
         paddingTop: 60,
+        transition: 'background 600ms ease, color 600ms ease',
       }}>
         <div style={{ flex: 1, padding: '110px 32px 0', display: 'flex', flexDirection: 'column' }}>
           <div style={{
@@ -607,4 +665,4 @@ function Wheel({ palette, values, value, onChange, format }) {
   );
 }
 
-Object.assign(window, { Onboarding, PALETTES, LIBRARY, pickMessage, Icon, Chip, loadState, saveState, NEEDS, HAVENS, INTERESTS });
+Object.assign(window, { Onboarding, PALETTES, HAVEN_PALETTES, LIBRARY, pickMessage, Icon, Chip, loadState, saveState, NEEDS, HAVENS, INTERESTS });
