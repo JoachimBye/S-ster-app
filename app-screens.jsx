@@ -584,7 +584,7 @@ function TabBar({ palette, tab, setTab }) {
   ];
   return (
     <div style={{
-      position: 'absolute', left: 18, right: 18, bottom: 18,
+      position: 'absolute', left: 18, right: 18, bottom: 'calc(18px + env(safe-area-inset-bottom))',
       borderRadius: 28,
       background: palette.ink + 'F2',
       backdropFilter: 'blur(20px)',
