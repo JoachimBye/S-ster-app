@@ -6,8 +6,6 @@ const { useState, useEffect, useRef, useMemo } = React;
 // Letter (the daily message + unfold reveal)
 // ─────────────────────────────────────────────────────────────────────
 function LetterCard({ palette, name, message, sealed, onOpen, onSave, saved }) {
-  // sealed = folded, unopened
-  // unsealed = unfolded, message visible
   const greeting = useMemo(() => {
     const hr = new Date().getHours();
     if (hr < 5) return 'god tidlig morgen';
@@ -23,11 +21,7 @@ function LetterCard({ palette, name, message, sealed, onOpen, onSave, saved }) {
   }, []);
 
   return (
-    <div style={{
-      width: '100%',
-      perspective: 1200,
-      marginTop: 8,
-    }}>
+    <div style={{ width: '100%', perspective: 1200, marginTop: 8 }}>
       <div
         onClick={sealed ? onOpen : undefined}
         style={{
@@ -45,7 +39,6 @@ function LetterCard({ palette, name, message, sealed, onOpen, onSave, saved }) {
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Wax seal / unfold visualization */}
         {sealed ? (
           <SealedLetter palette={palette} dateStr={dateStr} greeting={greeting} name={name} />
         ) : (
@@ -63,7 +56,6 @@ function SealedLetter({ palette, dateStr, greeting, name }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
       position: 'relative',
     }}>
-      {/* Postmark date stamp */}
       <div style={{
         position: 'absolute', top: 22, right: 22,
         fontFamily: 'DM Sans, system-ui, sans-serif',
@@ -81,7 +73,6 @@ function SealedLetter({ palette, dateStr, greeting, name }) {
         color: palette.muted, marginTop: 4, marginBottom: 36, alignSelf: 'flex-start',
       }}>dagens brev til {name}</div>
 
-      {/* Wax seal */}
       <div style={{
         width: 96, height: 96, borderRadius: '50%',
         background: `radial-gradient(circle at 35% 30%, ${palette.blush}, ${palette.accent} 75%, ${palette.ink}50 100%)`,
@@ -117,7 +108,6 @@ function UnfoldedLetter({ palette, dateStr, greeting, name, message, onSave, sav
       animation: 'soster-fadeUp 800ms cubic-bezier(.2,.8,.2,1) both',
       position: 'relative',
     }}>
-      {/* Faux paper texture: subtle horizontal rule on the right */}
       <div style={{
         position: 'absolute', top: 24, right: 28,
         fontFamily: 'DM Sans, system-ui, sans-serif',
@@ -205,7 +195,6 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
       color: palette.ink,
       paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
     }}>
-      {/* Header */}
       <div style={{ padding: '20px 24px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <div style={{
@@ -218,7 +207,6 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
             fontSize: 30, letterSpacing: -0.4, lineHeight: 1, color: palette.ink,
           }}>{dateNum}</div>
         </div>
-        {/* Tiny sun */}
         <div style={{
           width: 48, height: 48, borderRadius: '50%',
           background: `radial-gradient(circle at 35% 35%, ${palette.sun}, ${palette.blush})`,
@@ -228,7 +216,6 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
         }}/>
       </div>
 
-      {/* Letter */}
       <div style={{ padding: '24px 22px 8px' }}>
         <LetterCard
           palette={palette}
@@ -241,7 +228,6 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
         />
       </div>
 
-      {/* Streak / gentle stat */}
       <div style={{
         margin: '16px 22px 24px',
         padding: '16px 18px',
@@ -270,7 +256,6 @@ function TodayScreen({ palette, prefs, opened, message, onOpen, onSave, saved, s
         </div>
       </div>
 
-      {/* Tomorrow's preview */}
       <div style={{ padding: '0 22px 100px' }}>
         <div style={{
           fontFamily: 'DM Sans, system-ui, sans-serif',
@@ -354,7 +339,7 @@ function ArchiveScreen({ palette, archive, onUnsave }) {
         </div>
       ) : (
         <div style={{ padding: '8px 22px 100px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {archive.map((a, i) => (
+          {archive.map((a) => (
             <ArchiveCard key={a.id} palette={palette} item={a} onUnsave={() => onUnsave(a.id)} />
           ))}
         </div>
@@ -404,27 +389,45 @@ function ArchiveCard({ palette, item, onUnsave }) {
 
 // ─────────────────────────────────────────────────────────────────────
 // You / Settings screen
+//
+// Lives inside .soster-scroll which handles the outer scroll, so this
+// component only needs minHeight: '100%' and a generous paddingBottom
+// to clear the floating TabBar. No fixed heights on children — every
+// section flows naturally and chip rows wrap without collapsing into
+// neighbours.
 // ─────────────────────────────────────────────────────────────────────
 function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
   const initials = (prefs.name || 'S').slice(0, 1).toUpperCase();
+
   return (
     <div style={{
       minHeight: '100%',
       background: palette.page,
       color: palette.ink,
       paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
+      // Clear generous space at the bottom so nothing hides under TabBar
+      paddingBottom: 120,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 0,
     }}>
-      <div style={{ padding: '20px 24px 12px', display: 'flex', alignItems: 'center', gap: 16 }}>
+
+      {/* ── Avatar + name ─────────────────────────────────────────── */}
+      <div style={{
+        padding: '20px 24px 20px',
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
         <div style={{
-          width: 72, height: 72, borderRadius: 36,
+          flexShrink: 0,
+          width: 68, height: 68, borderRadius: 34,
           background: `radial-gradient(circle at 35% 30%, ${palette.sun}, ${palette.blush})`,
           color: palette.paper,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: '"Instrument Serif", Georgia, serif',
-          fontSize: 32, fontStyle: 'italic',
+          fontSize: 30, fontStyle: 'italic',
           boxShadow: `0 6px 18px ${palette.blush}50`,
         }}>{initials}</div>
-        <div>
+        <div style={{ minWidth: 0 }}>
           <div style={{
             fontFamily: 'DM Sans, system-ui, sans-serif',
             fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase',
@@ -432,24 +435,47 @@ function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
           }}>du er</div>
           <div style={{
             fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: 30, lineHeight: 1, letterSpacing: -0.4,
+            fontSize: 28, lineHeight: 1, letterSpacing: -0.4,
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>{prefs.name}</div>
         </div>
       </div>
 
-      {/* Stats row */}
-      <div style={{ padding: '16px 22px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      {/* ── Stats row — two equal columns, auto height ────────────── */}
+      <div style={{
+        padding: '0 22px',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 10,
+        marginBottom: 8,
+      }}>
         <StatBox palette={palette} value={archive.length} label="lagrede brev" />
         <StatBox palette={palette} value={prefs.streak || 1} label="dager på rad" />
       </div>
 
-      {/* Sections */}
+      {/* ── Din morgen ────────────────────────────────────────────── */}
       <SectionHeader palette={palette}>din morgen</SectionHeader>
-      <Row palette={palette} label="leveringstid" value={`${String(prefs.time.h).padStart(2,'0')}:${String(prefs.time.m).padStart(2,'0')}`} icon="clock" />
-      <Row palette={palette} label="mitt myke sted" value={(window.HAVENS.find(h => h.key === prefs.haven) || {}).label || prefs.haven} icon="leaf" />
+      <div style={{ padding: '0 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <Row
+          palette={palette}
+          label="leveringstid"
+          value={`${String(prefs.time.h).padStart(2,'0')}:${String(prefs.time.m).padStart(2,'0')}`}
+          icon="clock"
+        />
+        <Row
+          palette={palette}
+          label="mitt myke sted"
+          value={(window.HAVENS.find(h => h.key === prefs.haven) || {}).label || prefs.haven}
+          icon="leaf"
+        />
+      </div>
 
+      {/* ── Hva du trenger å høre ─────────────────────────────────── */}
       <SectionHeader palette={palette}>hva du trenger å høre</SectionHeader>
-      <div style={{ padding: '4px 22px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{
+        padding: '0 22px',
+        display: 'flex', flexWrap: 'wrap', gap: 8,
+      }}>
         {window.NEEDS.map(n => {
           const on = prefs.needs.includes(n.key);
           return (
@@ -470,8 +496,12 @@ function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
         })}
       </div>
 
+      {/* ── Hva som løfter deg ────────────────────────────────────── */}
       <SectionHeader palette={palette}>hva som løfter deg</SectionHeader>
-      <div style={{ padding: '4px 22px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{
+        padding: '0 22px',
+        display: 'flex', flexWrap: 'wrap', gap: 8,
+      }}>
         {window.INTERESTS.map(it => {
           const on = prefs.interests.includes(it.key);
           return (
@@ -493,11 +523,13 @@ function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
         })}
       </div>
 
-      <div style={{ padding: '34px 22px 100px' }}>
+      {/* ── Reset ─────────────────────────────────────────────────── */}
+      <div style={{ padding: '32px 22px 0' }}>
         <button
           onClick={onReset}
           style={{
-            width: '100%', padding: '14px', border: `1px solid ${palette.line}`,
+            width: '100%', padding: '14px',
+            border: `1px solid ${palette.line}`,
             background: palette.paper, color: palette.muted,
             fontFamily: 'DM Sans, system-ui, sans-serif',
             fontSize: 14, borderRadius: 14, cursor: 'pointer',
@@ -508,6 +540,9 @@ function YouScreen({ palette, prefs, archive, setPrefs, onReset }) {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// Shared sub-components
+// ─────────────────────────────────────────────────────────────────────
 function StatBox({ palette, value, label }) {
   return (
     <div style={{
@@ -531,7 +566,7 @@ function StatBox({ palette, value, label }) {
 function SectionHeader({ palette, children }) {
   return (
     <div style={{
-      padding: '24px 26px 10px',
+      padding: '22px 26px 10px',
       fontFamily: 'DM Sans, system-ui, sans-serif',
       fontSize: 11, letterSpacing: 1.8, textTransform: 'uppercase',
       color: palette.muted,
@@ -542,15 +577,14 @@ function SectionHeader({ palette, children }) {
 function Row({ palette, label, value, icon }) {
   return (
     <div style={{
-      margin: '0 22px',
-      padding: '14px 16px',
+      padding: '13px 16px',
       background: palette.paper,
       borderRadius: 14,
       border: `1px solid ${palette.line}`,
       display: 'flex', alignItems: 'center', gap: 12,
-      marginBottom: 8,
     }}>
       <div style={{
+        flexShrink: 0,
         width: 32, height: 32, borderRadius: 10,
         background: palette.canvas,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -558,13 +592,14 @@ function Row({ palette, label, value, icon }) {
       }}>
         <Icon name={icon} size={16} color={palette.accent} />
       </div>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
           fontFamily: 'DM Sans, system-ui, sans-serif',
           fontSize: 14, color: palette.ink,
         }}>{label}</div>
       </div>
       <div style={{
+        flexShrink: 0,
         fontFamily: '"Instrument Serif", Georgia, serif',
         fontStyle: 'italic',
         fontSize: 17, color: palette.muted,
@@ -578,9 +613,9 @@ function Row({ palette, label, value, icon }) {
 // ─────────────────────────────────────────────────────────────────────
 function TabBar({ palette, tab, setTab }) {
   const tabs = [
-    { key: 'today',   label: 'I dag',   icon: 'sun' },
-    { key: 'archive', label: 'Arkiv',   icon: 'heart' },
-    { key: 'you',     label: 'Deg',     icon: 'user' },
+    { key: 'today',   label: 'I dag',  icon: 'sun'  },
+    { key: 'archive', label: 'Arkiv',  icon: 'heart' },
+    { key: 'you',     label: 'Deg',    icon: 'user' },
   ];
   return (
     <div style={{
