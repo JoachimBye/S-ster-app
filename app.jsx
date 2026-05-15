@@ -58,21 +58,85 @@ const PALETTES = {
 };
 
 // ─────────────────────────────────────────────────────────────────────
+// Haven → Palette mapping
+// Each safe haven evokes a mood that maps naturally to a colour world.
+// kitchen  → goldenHour   (warm, sunny, buttery morning light)
+// sea      → morningMist  (salt haze, grey-blue, cool clarity)
+// forest   → sagebrush    (pine, moss, earthy green)
+// garden   → duskRose     (roses, soft pinks, grandmother warmth)
+// library  → morningMist  (cool quiet, dusty calm)
+// attic    → duskRose     (warm lamp light, creative blush)
+// ─────────────────────────────────────────────────────────────────────
+const HAVEN_PALETTES = {
+  kitchen: 'goldenHour',
+  sea:     'morningMist',
+  forest:  'sagebrush',
+  garden:  'duskRose',
+  library: 'morningMist',
+  attic:   'duskRose',
+};
+
+// ─────────────────────────────────────────────────────────────────────
 // Message library — filtered by needs + interests
 // ─────────────────────────────────────────────────────────────────────
 const LIBRARY = [
-  { tone: 'calm',       body: "Morgenen krever ingenting av deg ennå. Sitt litt med teen. Dagen kan vente." },
-  { tone: 'calm',       body: "Du har lov til å bevege deg sakte i dag. Saktmodighet er ikke det motsatte av fremgang — det er teksturen i den." },
-  { tone: 'warmth',     body: "Et sted, akkurat nå, tenker noen varmt på deg. Det lover jeg. Også jeg." },
-  { tone: 'warmth',     body: "Du er noens favorittmenneske. Du er det varme lyset i et annet rom av noens liv." },
-  { tone: 'motivation', body: "Hva det enn er — begynn med den minste versjonen av det. Én setning. Ett skritt. Ett pust. Det er hele trikset." },
-  { tone: 'motivation', body: "Den versjonen av deg fra ett år siden ville stille blitt forundret over hvor du står i dag." },
-  { tone: 'humor',      body: "Påminnelse: du har overlevd 100 % av dine verste morgener. En ganske imponerende statistikk, må jeg si." },
-  { tone: 'humor',      body: "Hvis noen spør: du gjør en flott jobb. Hvis ingen spør: du gjør fortsatt en flott jobb." },
-  { tone: 'courage',    body: "Det du unngår er mindre enn bekymringen for det. Alltid. Åpne døren." },
-  { tone: 'courage',    body: "Du trenger ikke føle deg modig for å være modig. Du må bare gjøre den neste lille, ærlige tingen." },
-  { tone: 'perspective',body: "Om ti år vil i dag være et mykt, uskarpt fotografi. Behandle det varsomt mens det fortsatt er i fokus." },
-  { tone: 'perspective',body: "Du er ikke på etterskudd. Det finnes ingen strek. Bare din egen stille, vakre vei." },
+  // ── Original 12 ──────────────────────────────────────────────────
+  { tone: 'calm',        body: "Morgenen krever ingenting av deg ennå. Sitt litt med teen. Dagen kan vente." },
+  { tone: 'calm',        body: "Du har lov til å bevege deg sakte i dag. Saktmodighet er ikke det motsatte av fremgang — det er teksturen i den." },
+  { tone: 'warmth',      body: "Et sted, akkurat nå, tenker noen varmt på deg. Det lover jeg. Også jeg." },
+  { tone: 'warmth',      body: "Du er noens favorittmenneske. Du er det varme lyset i et annet rom av noens liv." },
+  { tone: 'motivation',  body: "Hva det enn er — begynn med den minste versjonen av det. Én setning. Ett skritt. Ett pust. Det er hele trikset." },
+  { tone: 'motivation',  body: "Den versjonen av deg fra ett år siden ville stille blitt forundret over hvor du står i dag." },
+  { tone: 'humor',       body: "Påminnelse: du har overlevd 100 % av dine verste morgener. En ganske imponerende statistikk, må jeg si." },
+  { tone: 'humor',       body: "Hvis noen spør: du gjør en flott jobb. Hvis ingen spør: du gjør fortsatt en flott jobb." },
+  { tone: 'courage',     body: "Det du unngår er mindre enn bekymringen for det. Alltid. Åpne døren." },
+  { tone: 'courage',     body: "Du trenger ikke føle deg modig for å være modig. Du må bare gjøre den neste lille, ærlige tingen." },
+  { tone: 'perspective', body: "Om ti år vil i dag være et mykt, uskarpt fotografi. Behandle det varsomt mens det fortsatt er i fokus." },
+  { tone: 'perspective', body: "Du er ikke på etterskudd. Det finnes ingen strek. Bare din egen stille, vakre vei." },
+
+  // ── 30 nye meldinger ─────────────────────────────────────────────
+
+  // calm (5)
+  { tone: 'calm',        body: "Det er ikke alle dager som skal til noe. Noen er bare til å puste i — og det er nok." },
+  { tone: 'calm',        body: "Du trenger ikke løse alt i dag. Du trenger egentlig ikke løse noe som helst. Bare vær her litt." },
+  { tone: 'calm',        body: "La skuldrene synke. Bare det. Alt annet kan vente til skuldrene er nede." },
+  { tone: 'calm',        body: "Stillhet er ikke tom. Den er full av muligheter som hviler seg." },
+  { tone: 'calm',        body: "I dag kan du tillate deg å gjøre akkurat nok. Ingenting mer, og det er ikke det minste synd." },
+
+  // warmth (6)
+  { tone: 'warmth',      body: "Du har gitt bort mer varme enn du vet. Mer enn du noensinne vil få vite. Det teller." },
+  { tone: 'warmth',      body: "Det du er — akkurat slik, akkurat nå — er mer enn godt nok. Det er faktisk ganske flott." },
+  { tone: 'warmth',      body: "Verden er litt bedre med deg i den. Ikke fordi du er perfekt, men nettopp fordi du er deg." },
+  { tone: 'warmth',      body: "Noen der ute bærer på et minne av deg som er rent lys. Du er det minnet for noen." },
+  { tone: 'warmth',      body: "Du er den som andre tenker på når de trenger mot. Det er ingen tilfeldighet. Det er deg." },
+  { tone: 'warmth',      body: "Kjærligheten du har vist er ikke glemt. Den lever i mennesker som ennå ikke har fortalt deg det." },
+
+  // motivation (5)
+  { tone: 'motivation',  body: "Ett lite skritt er fortsatt bevegelse. Og bevegelse er alt som trengs for å komme seg videre." },
+  { tone: 'motivation',  body: "Det du holder på med — selv om det er smått og rotete — betyr noe. Fortsett." },
+  { tone: 'motivation',  body: "Du er ikke for sent ute. Du er akkurat i tide — din tid, som ingen andre har krav på." },
+  { tone: 'motivation',  body: "Begynn ufullstendig. Begynn uferdig. Begynn bare. Resten ordner seg underveis." },
+  { tone: 'motivation',  body: "Fremgang er ikke alltid synlig. Noen ganger vokser det under overflaten, som røtter om vinteren." },
+
+  // humor (5)
+  { tone: 'humor',       body: "Kaffe er teknisk sett en varm bønnesuppe. Uansett: god morgen til deg og din suppe." },
+  { tone: 'humor',       body: "Hverdagen er satt sammen av tusenvis av små, umulige ting du faktisk klarer. Litt imponerende, egentlig." },
+  { tone: 'humor',       body: "Du trenger ikke ha alt under kontroll. Fra utsiden ser det faktisk ganske bra ut, lover." },
+  { tone: 'humor',       body: "Noen dager er det nok å ha kommet seg ut av sengen. Registrert — og stille applaudert." },
+  { tone: 'humor',       body: "Påminnelse: du har en favorittkopp, et favorittteppe og et hjørne som er ditt. Det er egentlig rikdom." },
+
+  // courage (5)
+  { tone: 'courage',     body: "Den vanskelige samtalen du utsetter? Den er lettere i morgen, men du er modigere i dag." },
+  { tone: 'courage',     body: "Frykt og mot bor i samme kropp. Det er din kropp. Du velger hvem som får gå foran." },
+  { tone: 'courage',     body: "Noen ganger er mot å si nei. Andre ganger er det å si ja. Du vet allerede hvilket det er i dag." },
+  { tone: 'courage',     body: "Det du er redd for å begynne, er allerede begynt i det øyeblikket du tenker på det." },
+  { tone: 'courage',     body: "Modige mennesker er ikke de som ikke er redde. De er de som gjør det uansett — akkurat som deg." },
+
+  // perspective (4)
+  { tone: 'perspective', body: "Du er midt i historien din, ikke på slutten. Husk det neste gang det ser mørkt ut." },
+  { tone: 'perspective', body: "Om ett år vil i dag bare være 'den gangen'. Og du vil smile litt stille av deg selv." },
+  { tone: 'perspective', body: "De fleste tingene du bekymrer deg for i dag, vil du ikke huske om ti år. Pust ut, litt." },
+  { tone: 'perspective', body: "Livet ditt er ikke et etterslep av noen annens versjon. Det er et original — og ingen er lik din." },
 ];
 
 // Pick a deterministic message of the day given prefs + a date seed
@@ -198,18 +262,27 @@ function OnboardScreen({ palette, step, total, eyebrow, title, subtitle, childre
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: '100%',
+      overflow: 'hidden',                // contain everything — no page-level scroll
       background: palette.page,
       color: palette.ink,
-      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
+      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 20px)',
+      transition: 'background 400ms ease, color 400ms ease',
     }}>
-      {/* Top: progress + back */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '4px 22px 0', gap: 12, height: 28 }}>
+
+      {/* ── Progress bar + back btn (never scrolls) ───────────────── */}
+      <div style={{
+        flexShrink: 0,
+        display: 'flex', alignItems: 'center',
+        padding: '4px 22px 0', gap: 12, height: 32,
+      }}>
         <button
           onClick={onBack}
           disabled={!onBack}
           style={{
-            background: 'transparent', border: 'none', cursor: onBack ? 'pointer' : 'default',
-            color: onBack ? palette.muted : 'transparent', padding: 0, display: 'flex', alignItems: 'center',
+            background: 'transparent', border: 'none',
+            cursor: onBack ? 'pointer' : 'default',
+            color: onBack ? palette.muted : 'transparent',
+            padding: 0, display: 'flex', alignItems: 'center',
           }}
         ><Icon name="back" size={20} /></button>
         <div style={{ flex: 1, display: 'flex', gap: 4 }}>
@@ -224,44 +297,65 @@ function OnboardScreen({ palette, step, total, eyebrow, title, subtitle, childre
         <div style={{ width: 20 }} />
       </div>
 
-      {/* Body */}
-      <div style={{ flex: 1, padding: '36px 28px 0', display: 'flex', flexDirection: 'column' }}>
+      {/* ── Fixed header: eyebrow + title + subtitle (never scrolls) ─ */}
+      <div style={{
+        flexShrink: 0,
+        padding: '22px 28px 0',
+      }}>
         {eyebrow && (
           <div style={{
             fontFamily: 'DM Sans, system-ui, sans-serif',
             fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
-            color: palette.muted, marginBottom: 14,
+            color: palette.muted, marginBottom: 10,
           }}>{eyebrow}</div>
         )}
         <div style={{
           fontFamily: '"Instrument Serif", Georgia, serif',
-          fontSize: 34, lineHeight: 1.15, letterSpacing: -0.5,
-          marginBottom: 12, textWrap: 'pretty',
+          fontSize: 32, lineHeight: 1.15, letterSpacing: -0.5,
+          marginBottom: 10, textWrap: 'pretty',
         }}>{title}</div>
         {subtitle && (
           <div style={{
             fontFamily: 'DM Sans, system-ui, sans-serif',
-            fontSize: 15.5, lineHeight: 1.5,
-            color: palette.muted, marginBottom: 28, textWrap: 'pretty',
+            fontSize: 14.5, lineHeight: 1.5,
+            color: palette.muted, marginBottom: 0, textWrap: 'pretty',
           }}>{subtitle}</div>
         )}
-        <div style={{ flex: 1, overflowY: 'auto' }}>{children}</div>
       </div>
 
-      {/* Bottom CTA */}
-      <div style={{ padding: '14px 22px 38px' }}>
+      {/* ── Scrollable content zone ───────────────────────────────── */}
+      {/* minHeight: 0 is essential — without it flexbox won't shrink  */}
+      {/* this child and the scroll never kicks in on iOS/Android.     */}
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        padding: '16px 28px 12px',
+      }}>
+        {children}
+      </div>
+
+      {/* ── CTA footer (always anchored at bottom, always reachable) ─ */}
+      <div style={{
+        flexShrink: 0,
+        padding: `10px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)`,
+        background: palette.page,
+        // subtle fade-up so content doesn't hard-cut behind the button
+        boxShadow: `0 -16px 24px 8px ${palette.page}`,
+      }}>
         <button
           onClick={canNext ? onNext : undefined}
           disabled={!canNext}
           style={{
-            width: '100%', height: 56, borderRadius: 28,
+            width: '100%', height: 54, borderRadius: 27,
             border: 'none',
             background: canNext ? palette.ink : palette.line,
             color: palette.paper,
             fontFamily: '"Instrument Serif", Georgia, serif',
             fontSize: 20, fontStyle: 'italic', letterSpacing: 0.3,
             cursor: canNext ? 'pointer' : 'default',
-            transition: 'all 300ms ease',
+            transition: 'background 300ms ease, transform 120ms ease',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
           }}
         >
@@ -280,6 +374,14 @@ function Onboarding({ palette, onDone }) {
   const [interests, setInterests] = useState([]);
   const [hour, setHour] = useState(7);
   const [minute, setMinute] = useState(30);
+
+  // Derive a live preview palette from the chosen haven so the screen
+  // transitions smoothly as the user selects their safe haven.
+  const activePalette = useMemo(() => {
+    if (!haven) return palette;
+    const key = HAVEN_PALETTES[haven];
+    return PALETTES[key] || palette;
+  }, [haven, palette]);
 
   const TOTAL = 6;
 
@@ -362,27 +464,32 @@ function Onboarding({ palette, onDone }) {
       onNext={() => setStep(2)}
       canNext={!!name.trim()}
     >
-      <div style={{ marginTop: 8 }}>
+      <div style={{ marginTop: 12 }}>
+        {/* Injected CSS targets the placeholder font-size independently  */}
+        {/* so the typed text stays large while the hint stays readable.  */}
+        <style>{`#onboard-name-input::placeholder { font-size: 17px; opacity: 1; }`}</style>
         <input
+          id="onboard-name-input"
           autoFocus
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="navnet ditt, eller det dine kjære kaller deg"
+          placeholder="fornavnet ditt, eller et kallenavn"
           style={{
             width: '100%',
+            boxSizing: 'border-box',
             border: 'none',
             borderBottom: `1px solid ${palette.line}`,
             background: 'transparent',
             outline: 'none',
-            padding: '14px 0',
+            padding: '12px 0',
             fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: 28,
+            fontSize: 26,
             fontStyle: 'italic',
             color: palette.ink,
           }}
         />
         <div style={{
-          marginTop: 16, fontFamily: 'DM Sans, system-ui, sans-serif',
+          marginTop: 14, fontFamily: 'DM Sans, system-ui, sans-serif',
           fontSize: 13, color: palette.muted,
         }}>Dette forblir på enheten din.</div>
       </div>
@@ -415,12 +522,13 @@ function Onboarding({ palette, onDone }) {
   );
 
   // Step 3 — Safe haven
+  // Uses activePalette so colours shift live as she picks her haven.
   if (step === 3) return (
     <OnboardScreen
-      palette={palette} step={3} total={TOTAL}
+      palette={activePalette} step={3} total={TOTAL}
       eyebrow="ditt myke sted"
-      title={<>Hvor slipper <em style={{ color: palette.accent, fontStyle: 'italic' }}>skuldrene ned?</em></>}
-      subtitle="Stemningen du ønsker at brevene skal leve i."
+      title={<>Hvor slipper <em style={{ color: activePalette.accent, fontStyle: 'italic' }}>skuldrene ned?</em></>}
+      subtitle="Stemningen du ønsker at brevene skal leve i — og som farger hele appen din."
       onBack={() => setStep(2)}
       onNext={() => setStep(4)}
       canNext={!!haven}
@@ -428,6 +536,9 @@ function Onboarding({ palette, onDone }) {
       <div style={{ display: 'grid', gap: 10, marginTop: 4 }}>
         {HAVENS.map(h => {
           const on = haven === h.key;
+          // Show a tiny colour swatch so the user can sense the palette shift.
+          const havenPaletteKey = HAVEN_PALETTES[h.key];
+          const hp = PALETTES[havenPaletteKey] || activePalette;
           return (
             <button
               key={h.key}
@@ -436,11 +547,11 @@ function Onboarding({ palette, onDone }) {
                 textAlign: 'left',
                 padding: '16px 18px',
                 borderRadius: 18,
-                border: `1px solid ${on ? palette.ink : palette.line}`,
-                background: on ? palette.ink : palette.paper,
-                color: on ? palette.paper : palette.ink,
+                border: `1px solid ${on ? activePalette.ink : activePalette.line}`,
+                background: on ? activePalette.ink : activePalette.paper,
+                color: on ? activePalette.paper : activePalette.ink,
                 cursor: 'pointer',
-                transition: 'all 220ms ease',
+                transition: 'all 280ms ease',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
               }}
             >
@@ -452,10 +563,23 @@ function Onboarding({ palette, onDone }) {
                 <div style={{
                   fontFamily: 'DM Sans, system-ui, sans-serif',
                   fontSize: 13, marginTop: 3,
-                  color: on ? 'rgba(255,255,255,0.7)' : palette.muted,
+                  color: on ? 'rgba(255,255,255,0.7)' : activePalette.muted,
                 }}>{h.hint}</div>
               </div>
-              {on && <Icon name="check" size={20} />}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                {/* Mini palette preview chips */}
+                <div style={{ display: 'flex', gap: 3 }}>
+                  {[hp.canvas, hp.accent, hp.blush].map((c, i) => (
+                    <div key={i} style={{
+                      width: 10, height: 10, borderRadius: '50%',
+                      background: c,
+                      boxShadow: `0 0 0 .5px rgba(0,0,0,0.12)`,
+                      opacity: on ? 0.7 : 1,
+                    }}/>
+                  ))}
+                </div>
+                {on && <Icon name="check" size={20} />}
+              </div>
             </button>
           );
         })}
@@ -466,9 +590,9 @@ function Onboarding({ palette, onDone }) {
   // Step 4 — Interests
   if (step === 4) return (
     <OnboardScreen
-      palette={palette} step={4} total={TOTAL}
+      palette={activePalette} step={4} total={TOTAL}
       eyebrow="de små tingene"
-      title={<>Hva <em style={{ color: palette.accent, fontStyle: 'italic' }}>løfter deg?</em></>}
+      title={<>Hva <em style={{ color: activePalette.accent, fontStyle: 'italic' }}>løfter deg?</em></>}
       subtitle="Velg noen — brevene vil veve dem inn."
       onBack={() => setStep(3)}
       onNext={() => setStep(5)}
@@ -480,7 +604,7 @@ function Onboarding({ palette, onDone }) {
             key={it.key}
             icon={it.icon}
             active={interests.includes(it.key)}
-            palette={palette}
+            palette={activePalette}
             onClick={() => setInterests(s => s.includes(it.key) ? s.filter(x => x !== it.key) : [...s, it.key])}
           >{it.label}</Chip>
         ))}
@@ -491,15 +615,15 @@ function Onboarding({ palette, onDone }) {
   // Step 5 — Time
   if (step === 5) return (
     <OnboardScreen
-      palette={palette} step={5} total={TOTAL}
+      palette={activePalette} step={5} total={TOTAL}
       eyebrow="vårt morgenritual"
-      title={<>Når skal jeg <em style={{ color: palette.accent, fontStyle: 'italic' }}>banke på?</em></>}
+      title={<>Når skal jeg <em style={{ color: activePalette.accent, fontStyle: 'italic' }}>banke på?</em></>}
       subtitle="Jeg kommer stille. Aldri to ganger."
       onBack={() => setStep(4)}
       onNext={() => setStep(6)}
       nextLabel="det er tiden"
     >
-      <TimePicker palette={palette} hour={hour} minute={minute} setHour={setHour} setMinute={setMinute} />
+      <TimePicker palette={activePalette} hour={hour} minute={minute} setHour={setHour} setMinute={setMinute} />
     </OnboardScreen>
   );
 
@@ -510,8 +634,8 @@ function Onboarding({ palette, onDone }) {
     return (
       <div style={{
         height: '100%',
-        background: `radial-gradient(ellipse at 50% 100%, ${palette.blush}55 0%, ${palette.page} 60%)`,
-        color: palette.ink,
+        background: `radial-gradient(ellipse at 50% 100%, ${activePalette.blush}55 0%, ${activePalette.page} 60%)`,
+        color: activePalette.ink,
         display: 'flex', flexDirection: 'column',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
       }}>
@@ -519,17 +643,17 @@ function Onboarding({ palette, onDone }) {
           <div style={{
             fontFamily: 'DM Sans, system-ui, sans-serif',
             fontSize: 12, letterSpacing: 2, textTransform: 'uppercase',
-            color: palette.muted, marginBottom: 16,
+            color: activePalette.muted, marginBottom: 16,
           }}>alt er klart, {name.trim() || 'venn'}</div>
           <div style={{
             fontFamily: '"Instrument Serif", Georgia, serif',
             fontSize: 38, lineHeight: 1.15, letterSpacing: -0.6, textWrap: 'pretty',
           }}>
-            I morgen kl. <span style={{ color: palette.accent, fontStyle: 'italic' }}>{hourStr}:{minStr}</span> venter ditt første brev.
+            I morgen kl. <span style={{ color: activePalette.accent, fontStyle: 'italic' }}>{hourStr}:{minStr}</span> venter ditt første brev.
           </div>
           <div style={{
             marginTop: 24, fontFamily: 'DM Sans, system-ui, sans-serif',
-            fontSize: 16, lineHeight: 1.55, color: palette.muted, textWrap: 'pretty',
+            fontSize: 16, lineHeight: 1.55, color: activePalette.muted, textWrap: 'pretty',
           }}>
             Inntil da — det ligger en liten en klar til deg i dag, siden vi allerede har møttes.
           </div>
@@ -539,7 +663,7 @@ function Onboarding({ palette, onDone }) {
             onClick={finish}
             style={{
               width: '100%', height: 56, borderRadius: 28, border: 'none',
-              background: palette.ink, color: palette.paper,
+              background: activePalette.ink, color: activePalette.paper,
               fontFamily: '"Instrument Serif", Georgia, serif',
               fontSize: 20, fontStyle: 'italic', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
@@ -607,4 +731,4 @@ function Wheel({ palette, values, value, onChange, format }) {
   );
 }
 
-Object.assign(window, { Onboarding, PALETTES, LIBRARY, pickMessage, Icon, Chip, loadState, saveState, NEEDS, HAVENS, INTERESTS });
+Object.assign(window, { Onboarding, PALETTES, HAVEN_PALETTES, LIBRARY, pickMessage, Icon, Chip, loadState, saveState, NEEDS, HAVENS, INTERESTS });
