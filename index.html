@@ -91,7 +91,6 @@
 
     function App() {
       const [tweaks, setTweak] = useTweaks(DEFAULTS);
-      const palette = PALETTES[tweaks.palette] || PALETTES.goldenHour;
 
       // App state
       const [state, setState] = useState(() => {
@@ -107,11 +106,31 @@
 
       useEffect(() => { saveState(state); }, [state]);
 
+      // ── Palette resolution ──────────────────────────────────────────────
+      // Priority: manual tweak override > haven-derived > goldenHour default.
+      //
+      // We detect a manual override by checking whether the stored tweak
+      // palette differs from what the current haven would suggest. If the user
+      // has never touched the Tweaks panel (or has reset), we let the haven
+      // drive the colour world automatically.
+      //
+      // On first load (no prefs yet) we fall back to the tweak value so the
+      // onboarding welcome screen always has a colour.
+      const havenPaletteKey = state.prefs
+        ? (HAVEN_PALETTES[state.prefs.haven] || 'goldenHour')
+        : 'goldenHour';
+
+      // A tweak is considered "manually set" when it differs from the haven
+      // default — which means the user explicitly chose it in the panel.
+      const paletteKey = (tweaks.palette && tweaks.palette !== havenPaletteKey)
+        ? tweaks.palette
+        : havenPaletteKey;
+
+      const palette = PALETTES[paletteKey] || PALETTES.goldenHour;
+
       // Update body background to match palette
       useEffect(() => {
         document.body.style.background = palette.canvas;
-        const before = document.querySelector('style[data-bg]');
-        // We can't restyle ::before from JS easily, but the iOS frame fills most of the view.
       }, [palette]);
 
       // Today's deterministic message
@@ -126,8 +145,13 @@
       const saved = state.archive.some(a => a.id === todayArchiveId);
 
       function handleOnboardDone(prefs) {
+        // When onboarding finishes, sync the tweaks panel palette to the
+        // haven choice so the panel's selector reflects reality.
+        const derivedPalette = HAVEN_PALETTES[prefs.haven] || 'goldenHour';
+        setTweak('palette', derivedPalette);
         setState(s => ({ ...s, onboarded: true, prefs, openedToday: null }));
       }
+
       function handleOpen() {
         setState(s => ({ ...s, openedToday: todayKey }));
       }
@@ -148,14 +172,9 @@
       }
       function handleReset() {
         if (!confirm('Starte på nytt? Dette sletter velkomstforløpet og arkivet.')) return;
+        setTweak('palette', 'goldenHour');
         setState({ onboarded: false, prefs: null, openedToday: null, archive: [], tab: 'today', streak: 1 });
       }
-
-      // Demo seed for archive when first arriving so it doesn't feel empty
-      const seededArchive = useMemo(() => {
-        if (state.archive.length > 0) return state.archive;
-        return [];
-      }, [state.archive]);
 
       // Determine which screen to show
       let screen;
@@ -221,7 +240,7 @@
             <TweakSection label="Palett">
               <TweakRadio
                 label="Stemning"
-                value={tweaks.palette}
+                value={paletteKey}
                 options={['goldenHour','duskRose','sagebrush','morningMist']}
                 onChange={(v) => setTweak('palette', v)}
               />
@@ -236,8 +255,8 @@
                     style={{
                       height: 44,
                       borderRadius: 10,
-                      border: tweaks.palette === k ? `2px solid #fff` : `2px solid transparent`,
-                      outline: tweaks.palette === k ? `1px solid #000` : 'none',
+                      border: paletteKey === k ? `2px solid #fff` : `2px solid transparent`,
+                      outline: paletteKey === k ? `1px solid #000` : 'none',
                       cursor: 'pointer',
                       padding: 0, overflow: 'hidden',
                       display: 'flex',
@@ -250,7 +269,10 @@
                 ))}
               </div>
               <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>
-                {PALETTES[tweaks.palette]?.name}
+                {PALETTES[paletteKey]?.name}
+                {state.prefs && paletteKey === havenPaletteKey && (
+                  <span style={{ opacity: 0.6 }}> · valgt fra ditt myke sted</span>
+                )}
               </div>
             </TweakSection>
 
@@ -258,6 +280,7 @@
               <TweakButton label="Forsegle dagens brev igjen" onClick={() => setState(s => ({ ...s, openedToday: null }))} />
               <TweakButton label="Start velkomstforløpet på nytt" onClick={() => {
                 if (confirm('Starte velkomstforløpet på nytt?')) {
+                  setTweak('palette', 'goldenHour');
                   setState({ onboarded: false, prefs: null, openedToday: null, archive: [], tab: 'today', streak: 1 });
                 }
               }} />
